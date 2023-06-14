@@ -4,11 +4,14 @@ from .models import Cart, Order, OrderItem, MenuItem, Category
 from .permissions import IsManagerOnly
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
+from rest_framework import filters
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from rest_framework.decorators import api_view, permission_classes, throttle_classes, action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .serializers import MenuItemSerializer, ManagerSerializer, CartSerializer, OrderSerializer, CategorySerializer
+from django_filters.rest_framework import DjangoFilterBackend
 import datetime
+
 
 
 currentDate = datetime.datetime.now().date()
@@ -20,7 +23,14 @@ currentDate = datetime.datetime.now().date()
 class CategoryView(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsManagerOnly]
+    # permission_classes = [IsManagerOnly]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            permission_classes = []
+        else:
+            permission_classes = [IsManagerOnly]
+        return [permission() for permission in permission_classes]
 
 class SingleCategoryView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
@@ -34,8 +44,11 @@ class SingleCategoryView(generics.RetrieveUpdateDestroyAPIView):
 # Class Model View
 class MenuItemView(viewsets.ModelViewSet):
     
-    queryset = MenuItem.objects.all()
+    queryset = MenuItem.objects.select_related('category').all()
     serializer_class = MenuItemSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['category']
+    
 
     def get_throttles(self):
         if self.request.user.groups.filter(name='Manager').exists():
