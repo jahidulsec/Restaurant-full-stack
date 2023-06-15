@@ -14,6 +14,7 @@ import Modal from './components/Modal'
 import About from './components/About'
 import Cart from './components/Cart'
 import Payment from './pages/Payment'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 
 const reducer = (state, action) => {
@@ -48,6 +49,7 @@ const App = () => {
 
   const [cart, setCart] = useState(false)
   const [cartItems, dispatch] = useReducer(reducer, [])
+  const queryClient = new QueryClient()
 
   useEffect(()=>{
     console.log(cartItems)
@@ -87,6 +89,7 @@ let cartTotal = cartPrices.reduce((accumulator, currentValue) => {
     <div className='app'>
       <Header cartOpen={setCart} cart={cart} cartItems={cartItems} />
       <AlertProvider>
+        <QueryClientProvider client={queryClient}>
         <main>
           <Routes>
             <Route path='/' element={<Home />} />
@@ -107,8 +110,9 @@ let cartTotal = cartPrices.reduce((accumulator, currentValue) => {
             cartTotal={cartTotal}
             onDelete={handleCartItemDelete}
             onReset={handleResetCart}
-          />
+            />
         </main>
+        </QueryClientProvider>
       </AlertProvider>
       <Footer />
     </div>

@@ -13,7 +13,7 @@ const MenuSection2 = () => {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
         </p>
         <Link to={`/online-menu`}>
-          <Button>Order Now</Button>
+          <Button color={`yellow`}>Order Now</Button>
         </Link>
       </div>
       <div className="menu-item2-img">

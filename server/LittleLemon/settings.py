@@ -131,6 +131,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = [
+'DELETE',
+'GET',
+'OPTIONS',
+'PATCH',
+'POST',
+'PUT',
+]
 
 STATIC_URL = 'static/'
 STATIC_DIRS = os.path.join(BASE_DIR, 'static')
@@ -152,15 +160,16 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'user': '5/minute',
-        'anon': '5/minute',
-        'manager': '3/minute'
+        'user': '50/minute',
+        'anon': '50/minute',
+        'manager': '30/minute'
     },
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 4
+    'PAGE_SIZE': 6
 }
 
 DJOSER = {
     'USER_ID_FIELD': 'username',
+    'LOGIN_FIELD': 'username',
     'USER_CREATE_PASSWORD_RETYPE': True,
     }

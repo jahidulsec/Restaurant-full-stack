@@ -14,10 +14,10 @@ const Hero = () => {
         </p>
         <div className="btns">
           <Link to='/online-menu'>
-            <Button>Order Now</Button>
+            <Button color={`yellow`}>Order Now</Button>
           </Link>
           <Link to='/reservation'>
-            <Button>Reserve a table</Button>
+            <Button color={`yellow`}>Reserve a table</Button>
           </Link>
         </div>
       </div>

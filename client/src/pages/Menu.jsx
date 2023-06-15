@@ -1,63 +1,84 @@
 import React, { useEffect, useState } from 'react'
 import MenuCard from '../components/MenuCard'
-import { category, menuItems } from '../data'
+// import { category, menuItems } from '../data'
 import {AiOutlineRight, AiOutlineLeft} from 'react-icons/ai'
 import { faL, fas } from '@fortawesome/free-solid-svg-icons'
 import Loading from '../components/Loading'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import newRequest from '../utilities/newRequest'
 
 const Menu = ({onAdd}) => {
 
   const [limit, setLimit] = useState(6)
   const [currentPage, setCurrentPage] = useState(1)
   const [pageNumber, setPageNumber] = useState([])
-  const [firstIndex, setFirstIndex] = useState()
-  const [lastIndex, setLastIndex] = useState()
   const [catSelected, setCatSelected] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
 
-  let menuItemData = menuItems.filter((item) => {
-    if(catSelected !== '') {
-      return item.category === catSelected
-    }
-    return item
+  
+
+  //  fetching category
+  const { isLoading: loadingCat, error: errorCat, data: cat } = useQuery({
+    queryKey: ['category'],
+    queryFn: () => 
+      newRequest.get('/api/category/').then(
+        (res) => {
+          return res.data
+        }
+      )
   })
 
+
+
+
+  //  fetching data from api
+  const { isLoading, error, data } = useQuery({
+    queryKey: ['menuItem', currentPage, catSelected],
+    queryFn: () =>
+      newRequest.get(`/api/menu-items/?page=${currentPage}${catSelected ? `&category=${catSelected}` : ''}`).then(
+        (res) => {
+          return res.data
+        }
+      )
+  })
+
+
+
   const handlePageNumber = () => {
-    let numberOfPage = menuItemData.length / limit
-    numberOfPage = Math.ceil(numberOfPage)
-    let num = Array.from({length: numberOfPage}, (_, i) => i + 1)
-    setPageNumber(num)
+    if (data) {
+      let numberOfPage = data.count / limit 
+      numberOfPage = Math.ceil(numberOfPage)
+      let num = Array.from({length: numberOfPage}, (_, i) => i + 1)
+      setPageNumber(num)
+    }
+    else{
+      return
+    }
   }
 
   
 
 
   useEffect(() => {
-    
-    let last = currentPage * limit
-    let first = last - limit
-    // console.log('first',first, last, 'page '+ pageNumber[1])
-    setFirstIndex(first)
-    setLastIndex(last)
 
     if (catSelected) {
       setCurrentPage(1)
     }
     handlePageNumber()
 
-  }, [currentPage,catSelected])
+  }, [data,currentPage,catSelected])
 
 
 
   const handleNext = () => {
-    if  (currentPage > pageNumber.length-1) {
+    if  (data.next === null) {
       return 
     }
     setCurrentPage((prev) => prev + 1)
   }
 
   const handlePrev = () => {
-    if  (currentPage < 2) {
+    if  (data.previous === null) {
       return 
     }
     setCurrentPage((prev) => prev - 1)
@@ -80,34 +101,35 @@ const Menu = ({onAdd}) => {
           </h3>
           <div className="query-list">
             {
-              category.map(cat => (
+              loadingCat ? <span className="loading"></span> : errorCat ? 'Something Went Wrong!' :
+              cat.results.map(cat => (
                 <button 
-                  className={`btn-pagination ${catSelected === cat.name ? 'page-selected' : ''}`}
+                  className={`btn-pagination ${catSelected == cat.id ? 'page-selected' : ''}`}
                   key={cat.id}
-                  value={cat.name}
+                  value={cat.id}
                   onClick={(e) => {
-                    catSelected !== cat.name ? 
+                    catSelected != cat.id ? 
                       setCatSelected(e.target.value) 
                       :
                       setCatSelected("")}}
                 >
-                  {cat.name}
+                  {cat.title}
                 </button>
               ))
             }
           </div>
         </div>
         {
-          isLoading ? <Loading /> :
+          isLoading ? <Loading /> : error ? "Something went wrong!" :
         <div className="menu-cards">
           {
-            menuItemData.slice(firstIndex, lastIndex).map( item => (
+            data.results.map( item => (
               <MenuCard 
                 key={item.id}
-                name={item.name}
+                name={item.title}
                 price={item.price}
                 desc={item.desc}
-                imgUrl={item.imgUrl}
+                imgUrl={item.img_url}
                 onAdd={onAdd}
               />
             ))

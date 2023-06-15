@@ -1,13 +1,13 @@
 import React from 'react'
 
-const Button = ({children, onClick, id, type, disabled, loading}) => {
+const Button = ({children, onClick, id, type, disabled, loading, color}) => {
 
   // const [loading, setLoading] = React.useState(false)
 
   return (
     <button 
       type={type}
-      className='btn-yellow'
+      className={`btn-${color}`}
       onClick={onClick}
       id={id}
       // onClick={()=> {setLoading(!loading)}}

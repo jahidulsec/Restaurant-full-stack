@@ -14,10 +14,10 @@ const Header = ({cartOpen, cart, cartItems}) => {
   const navDropRef = useRef(undefined)
 
   useEffect(() => {
-    const user = sessionStorage.getItem('user')
+    const user = localStorage.getItem('user')
     if (user){
       setLogin(true)
-      setUser(JSON.parse(user))
+      setUser(user)
     }
   },[pathname])
 
@@ -115,7 +115,7 @@ const Header = ({cartOpen, cart, cartItems}) => {
             Online Menu
           </Link>
         </li>
-        <li onClick={() => {sessionStorage.removeItem('user'), setUserDrop(!userDrop), window.location.reload()}}>Logout</li>
+        <li onClick={() => {localStorage.removeItem('user'), setUserDrop(!userDrop), window.location.reload()}}>Logout</li>
       </ul>
     </header>
   )
