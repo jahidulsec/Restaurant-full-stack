@@ -1,7 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser, PermissionsMixin, BaseUserManager
 
-# Create your models here.
+
+# models 
 class Category(models.Model):
     slug = models.SlugField()
     title = models.CharField(max_length=255, db_index=True)
