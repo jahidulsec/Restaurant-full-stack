@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'LittleLemonAPI',
+    'account',
     'django_filters',
     'djoser',
 ]
@@ -112,6 +113,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 EMAIL_USE_TLS = True
 
 
+AUTH_USER_MODEL = 'account.MyUserAccount'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -202,12 +204,17 @@ DOMAIN = 'https://little-lemon-ten.vercel.app'
 SITE_NAME = 'Little Lemon'
 
 DJOSER = {
-    'USER_ID_FIELD': 'username',
-    'LOGIN_FIELD': 'username' or 'email',
+    'USER_ID_FIELD': 'email',
+    'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': 'activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SEND_CONFIRMATION_EMAIL': True,
     'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'SERIALIZERS': {
+        'user_create': 'account.serializers.UserCreateSerializer',
+        'user_delete': 'djoser.serializers.UserDeleteSerializer',
+        'user': 'account.serializers.UserCreateSerializer',
+        }
     }

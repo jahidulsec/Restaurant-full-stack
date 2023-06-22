@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import  Group
+from django.contrib.auth import  get_user_model
 from .models import Cart, Order, OrderItem, MenuItem, Category
 from .permissions import IsManagerOnly
 from rest_framework import generics, viewsets
@@ -15,8 +16,7 @@ import datetime
 
 
 currentDate = datetime.datetime.now().date()
-
-
+User = get_user_model()
 
 
 ## Category

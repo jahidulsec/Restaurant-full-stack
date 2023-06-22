@@ -1,5 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 # models 
@@ -12,10 +15,10 @@ class Category(models.Model):
 
 class MenuItem(models.Model):
     title = models.CharField(max_length=255, db_index= True)
-    price = models.DecimalField(max_digits=6, decimal_places=2, db_index=True)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
     featured = models.BooleanField(db_index=True)
-    img_url = models.URLField(db_index=True, max_length=255, default=None)
-    desc = models.CharField(max_length=255, default=None)
+    img_url = models.URLField(db_index=True, max_length=255)
+    desc = models.CharField(max_length=255, db_index= True)
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT
     )

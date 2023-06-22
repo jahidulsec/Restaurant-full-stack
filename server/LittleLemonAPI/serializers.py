@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from .models import MenuItem, Category, Cart, Order, OrderItem
-from django.contrib.auth.models import User, Group
+# from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+
+
+
+
+
+User = get_user_model()
+
 
 
 class CategorySerializer(serializers.ModelSerializer):
