@@ -4,15 +4,21 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import * as Yup from 'yup'
 import Button from '../components/Button'
+import { useAlertContext } from '../context/alertContext'
 
 const Registration = () => {
 
   const [isLoading, setLoading] = useState(false)
   const [error, setError] = useState({
+    first_name:'',
+    last_name:'',
     username:'',
     password:'',
     non_field_errors: '',
   })
+
+  const{onOpen} = useAlertContext()
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -22,6 +28,8 @@ const Registration = () => {
   const formik = useFormik({
     initialValues: {
       username: '',
+      first_name: '',
+      last_name: '',
       password: '',
       re_password: '',
       email: '',
@@ -43,16 +51,19 @@ const Registration = () => {
             return data
           }
         )
-        
+        console.log(result)
         if (status===400) {
           setError({
             ...error,
+            first_name: result.first_name,
+            last_name: result.last_name,
             username: result.username,
             password: result.password,
             non_field_errors: result.non_field_errors
           })
         }
         if (status === 201) {
+          onOpen('Pending!', "Check your email!")
           navigate('/login')
         }
       } catch (error) {
@@ -63,6 +74,8 @@ const Registration = () => {
     },
     validationSchema: Yup.object({
       username: Yup.string().required('Enter a unique username!').min(4, 'Must be at least of 4 characters'),
+      first_name: Yup.string().required('Enter a your first name!').min(4, 'Must be at least of 4 characters'),
+      last_name: Yup.string().required('Enter a your last name!').min(4, 'Must be at least of 4 characters'),
       email: Yup.string().email('Enter a valid email!').required(),
       password: Yup.string().required('Enter your password!').min(8, 'Must be at least of 8 characters'),
       re_password: Yup.string().required('Confirm your password!').min(8, 'Must be at least of 8 characters'),
@@ -78,6 +91,54 @@ const Registration = () => {
           <h1 className="ff-secondary fw-regular fs-2xl text-dark">
             Welcome to Little Lemon!
           </h1>
+          <div className="login-field">
+            <label className='login-label' htmlFor="first_name">First Name<sup>*</sup></label>
+            <input
+              type="text"
+              name="first_name"
+              id="first_name"
+              placeholder='ex. John'
+              value={formik.values.first_name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {
+              // clien-side validation
+
+              !!formik.errors.first_name && formik.touched.first_name &&
+                  <span className="error-msg">{formik.errors.first_name}</span>
+            }
+            {
+              // server-side validation
+
+              error.first_name && error.first_name !== undefined &&
+                  <span className="error-msg">{error.first_name}</span>
+            }
+          </div>
+          <div className="login-field">
+            <label className='login-label' htmlFor="last_name">Last Name<sup>*</sup></label>
+            <input
+              type="text"
+              name="last_name"
+              id="last_name"
+              placeholder='ex. Doe'
+              value={formik.values.last_name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {
+              // clien-side validation
+
+              !!formik.errors.last_name && formik.touched.last_name &&
+                  <span className="error-msg">{formik.errors.last_name}</span>
+            }
+            {
+              // server-side validation
+
+              error.last_name && error.last_name !== undefined &&
+                  <span className="error-msg">{error.last_name}</span>
+            }
+          </div>
           <div className="login-field">
             <label className='login-label' htmlFor="username">Username<sup>*</sup></label>
             <input

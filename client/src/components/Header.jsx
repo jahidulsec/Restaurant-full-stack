@@ -14,10 +14,10 @@ const Header = ({cartOpen, cart, cartItems}) => {
   const navDropRef = useRef(undefined)
 
   useEffect(() => {
-    const user = localStorage.getItem('user')
+    const user = JSON.parse(localStorage.getItem('user'))
     if (user){
       setLogin(true)
-      setUser(user)
+      setUser(user.first_name)
     }
   },[pathname])
 
@@ -60,7 +60,7 @@ const Header = ({cartOpen, cart, cartItems}) => {
 
 
   return (
-    <header className={(active || pathname === '/about' || pathname === '/login' || pathname === '/register') ? 'header view-nav' : 'header'}>
+    <header className={(active || pathname === '/about' || pathname === '/login' || pathname === '/register' || pathname === '/activate/:uid/:token') ? 'header view-nav' : 'header'}>
       <h1 className='logo ff-secondary fw-regular text-light fs-xl'>Little Lemon</h1>
       <input type="checkbox" className='nav-toggle' name="nav-toggle" id="nav-toggle" />
       <nav className='nav ff-primary fs-s text-light' ref={headerRef}>
@@ -100,22 +100,20 @@ const Header = ({cartOpen, cart, cartItems}) => {
         >
         <li>
           <Link 
-            to={`/reservation`}
             onClick={() => {setUserDrop(false)}}
           >
-            Reservation
+            Profile
           </Link>
         </li>
-        <li 
-          onClick={() => {setUserDrop(false)}}
+        <li onClick={() => {
+          localStorage.removeItem('user'), 
+          localStorage.removeItem('access'), 
+          setUserDrop(!userDrop), 
+          window.location.reload()
+        }}
         >
-          <Link 
-            to={`/online-menu`} 
-          >
-            Online Menu
-          </Link>
+          Logout
         </li>
-        <li onClick={() => {localStorage.removeItem('user'), setUserDrop(!userDrop), window.location.reload()}}>Logout</li>
       </ul>
     </header>
   )

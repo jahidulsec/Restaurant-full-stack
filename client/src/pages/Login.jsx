@@ -3,14 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import * as Yup from 'yup'
 import Button from '../components/Button'
+import axios from 'axios'
 
 const Login = () => {
 
   const [user, setUser] = useState('')
   const [isLoading, setloading] = useState(false)
-  const [error, setError] = useState({
-    non_field_errors: '',
-  })
+  const [error, setError] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -19,14 +18,14 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues:{
-      username: '',
+      email: '',
       password: '',
     },
     onSubmit: async(values) => {
       console.log(values)
       setloading(true)
       try {
-        const response = await fetch('http://127.0.0.1:8000/auth/token/login', {
+        const response = await fetch('http://127.0.0.1:8000/auth/jwt/create/', {
           method: 'POST',
           headers: {
             "content-type": "application/json"
@@ -41,37 +40,30 @@ const Login = () => {
         )
         console.log(data)
 
-        if(status===400) {
-          setError({
-            ...error,
-            non_field_errors: data.non_field_errors,
-          })
+        if(status!==200) {
+          setError(true)
         }
 
-        let token = ''
         if (status === 200) {
-          localStorage.setItem('auth_token', data.auth_token)
-          token = data.auth_token
+          localStorage.setItem('refresh', data.refresh)
+          localStorage.setItem('access', data.access)
           localStorage.setItem('user', values.username)
           navigate('/')
         }
+        
 
-        // fetching user info
-        // await fetch('http://127.0.0.1:8000/auth/users/me/', {
-        //   method: 'GET',
-        //   mode: 'cors',
-        //   credentials: 'same-origin',
-        //   headers: {
-        //     "content-type": "application/json",
-        //     "Authorization": "Token ea1604b0352dd6010dc58f0d81351045f04feb9b",
-        //   },
-          
-        // }).then(
-        //   res => res.json()
-        // ).then(
-        //   data => console.log(data)
-        // )
+        // get user info
 
+        const config = {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `JWT ${data.access}`,
+            'Accept': 'application/json',
+          }
+        }
+
+        const res = await axios.get('http://127.0.0.1:8000/auth/users/me/', config)
+        localStorage.setItem('user', JSON.stringify(res.data))
 
       } catch (error) {
         console.log(error)
@@ -80,14 +72,13 @@ const Login = () => {
       }
     },
     validationSchema: Yup.object({
-      username: Yup.string().required('Enter your username!').min(4, 'Must be at least of 4 characters!'),
+      email: Yup.string().email('Please enter a valid email!').required('Enter your Email!'),
       password: Yup.string().required("Enter your password!").min(8, 'At least 8 characters!')
     }) 
   })
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    sessionStorage.setItem('user', JSON.stringify(user))
     navigate('/')
   }
 
@@ -99,21 +90,21 @@ const Login = () => {
             Welcome to Little Lemon!
           </h1>
           <div className="login-field">
-            <label className='login-label' htmlFor="username">Username<sup>*</sup></label>
+            <label className='login-label' htmlFor="email">Email<sup>*</sup></label>
             <input 
-              type="text" 
-              name="username" 
-              id="username" 
+              type="email" 
+              name="email" 
+              id="email" 
               placeholder='ex. johndoe' 
-              value={formik.values.username}
+              value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
             {
               // clien-side validation
 
-              !!formik.errors.username && formik.touched.username &&
-                  <span style={{color: '#ff3e3e'}} className="error-msg">{formik.errors.username}</span>
+              !!formik.errors.email && formik.touched.email &&
+                  <span style={{color: '#ff3e3e'}} className="error-msg">{formik.errors.email}</span>
             }
           </div>
           <div className="login-field">
@@ -145,6 +136,12 @@ const Login = () => {
               <button className='btn-dark'>Register!</button>
             </Link>
           </div>
+          {error ? 
+              <p className='ff-primary fs-s fw-bold text-red ' style={{marginTop: '1rem'}}>
+                Check your email or password!
+              </p>
+              : ''
+            }
         </form>
       </div>
     </section>

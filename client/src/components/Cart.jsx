@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {MdClose} from 'react-icons/md'
 import { menuItems } from '../data'
 import { Link, useNavigate } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 const Cart = ({cart, cartOpen, cartItems, onDelete, onReset, cartPrices, cartTotal}) => {
 
     const navigate = useNavigate()
+    console.log(!cartItems.length)
     
     console.log(cartTotal, cartPrices)
     
@@ -24,7 +25,7 @@ const Cart = ({cart, cartOpen, cartItems, onDelete, onReset, cartPrices, cartTot
                     <div key={idx} className="cart-item">
                         <div className="cart-desc">
                             <span className="item-title">{item.name}</span>
-                            <span className="item-price">$ {item.price.toFixed(2)} </span>
+                            <span className="item-price">$ {item.price} </span>
                         </div>
                         <MdClose 
                             className='item-del' 
@@ -46,7 +47,7 @@ const Cart = ({cart, cartOpen, cartItems, onDelete, onReset, cartPrices, cartTot
             </div>
             <div className="cart-btns">
                 <button 
-                    className='btn-yellow'
+                    // className='btn-yellow'
                     onClick={() => {navigate('/payment')}}
                 >
                     Pay your bill

@@ -217,6 +217,10 @@ select {
     color: var(--text-clr-dark);
 }
 
+.text-red{
+    color: var(--clr-red);
+}
+
 button{
     border: none;
     padding: 5px 40px;
@@ -438,7 +442,7 @@ nav a{
 .nav-user-option{
     position: absolute;
     top: 3.25rem;
-    right: 1.5rem;
+    right: 5rem;
     background-color: var(--clr-light);
     padding: 1rem 0;
     border-radius: 5px;
@@ -1790,4 +1794,16 @@ dialog::backdrop{
 
 .registration-section .btns{
     margin-top: 1rem;
+}
+
+
+
+
+/* activation page */
+
+.activation-section {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

@@ -46,7 +46,7 @@ export const DropDownGroup = ({children, label, icon, onClick, onSelected}) => {
         <span style={{textTransform: 'capitalize'}}>{value}</span>
         <FontAwesomeIcon
           className={open ? 'icon-rotate':'icon'} 
-         icon={faChevronDown} 
+          icon={faChevronDown} 
         />
       </div>
       <ul 

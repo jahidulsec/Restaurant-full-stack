@@ -12,6 +12,18 @@ class Category(models.Model):
 
     def __str__(self) -> str:
         return self.title
+    
+
+# class Booking(models.Model):
+#     first_name = models.CharField(max_length=255)
+#     last_name = models.CharField(max_length=255)
+#     email = models.EmailField(max_length=255)
+#     phone = models.CharField(max_length=20)
+#     date = models.DateField()
+#     time = models.TimeField()
+#     occassion = models.CharField(max_length=255)
+#     diners = models.CharField(max_length=2)
+#     comment = models.CharField(max_length=255, required=False)
 
 class MenuItem(models.Model):
     title = models.CharField(max_length=255, db_index= True)

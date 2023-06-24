@@ -15,6 +15,7 @@ import About from './components/About'
 import Cart from './components/Cart'
 import Payment from './pages/Payment'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Activation from './pages/Activation'
 
 
 const reducer = (state, action) => {
@@ -56,7 +57,7 @@ const App = () => {
   },[cartItems])
 
   const cartPrices = cartItems.map(item => {
-    return item.price
+    return Number(item.price)
 }) 
 
 let cartTotal = cartPrices.reduce((accumulator, currentValue) => {
@@ -99,6 +100,7 @@ let cartTotal = cartPrices.reduce((accumulator, currentValue) => {
             <Route path='/about' element={<About />} />
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Registration />} />
+            <Route path='/activate/:uid/:token' element={<Activation />} />
             <Route path='/payment' element={<Payment cartTotal={cartTotal} />} />
           </Routes>
           <Modal />
